@@ -222,7 +222,7 @@ export function getPersonDetail(tagId: number): any {
   if (!tagRow) return null;
 
   const segmentsSql = `
-    SELECT s.*, i.title as interview_title
+    SELECT s.*, i.title as interview_title, i.interview_date as interview_date
     FROM segments s
     JOIN segment_tags st ON s.id = st.segment_id
     JOIN interviews i ON s.interview_id = i.id
@@ -245,18 +245,22 @@ export function getPersonDetail(tagId: number): any {
   `;
   const relatedPeopleRows = db.prepare(relatedPeopleSql).all(tagId) as any[];
 
-  const segments = segmentRows.map(row => ({
-    id: row.id,
-    interviewId: row.interview_id,
-    startTime: row.start_time,
-    endTime: row.end_time,
-    text: row.text_content,
-    originalText: row.original_text,
-    isEdited: !!row.is_edited,
-    orderIndex: row.order_index,
-    interviewTitle: row.interview_title,
-    tags: [],
-  }));
+  const segments = segmentRows.map(row => {
+    const segmentTags = getSegmentTags(row.id);
+    return {
+      id: row.id,
+      interviewId: row.interview_id,
+      startTime: row.start_time,
+      endTime: row.end_time,
+      text: row.text_content,
+      originalText: row.original_text,
+      isEdited: !!row.is_edited,
+      orderIndex: row.order_index,
+      interviewTitle: row.interview_title,
+      interviewDate: row.interview_date,
+      tags: segmentTags,
+    };
+  });
 
   return {
     id: tagRow.id,

@@ -19,10 +19,11 @@ interface TagBadgeProps {
   tag: Tag;
   showCategory?: boolean;
   size?: 'sm' | 'md';
+  count?: number;
   className?: string;
 }
 
-export default function TagBadge({ tag, showCategory = false, size = 'sm', className = '' }: TagBadgeProps) {
+export default function TagBadge({ tag, showCategory = false, size = 'sm', count, className = '' }: TagBadgeProps) {
   const colorClass = categoryColors[tag.category] || categoryColors.person;
 
   return (
@@ -39,6 +40,9 @@ export default function TagBadge({ tag, showCategory = false, size = 'sm', class
         <span className="opacity-60">{categoryLabels[tag.category]}·</span>
       )}
       <span>{tag.name}</span>
+      {count !== undefined && count > 0 && (
+        <span className="opacity-60">×{count}</span>
+      )}
     </span>
   );
 }
